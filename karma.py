@@ -26,7 +26,7 @@ def add_karma_cmd(client, message, args):
     if to_id == from_id:
         return "4ril??"
     if not _eligible_to_give(from_id, to_id):
-        return 'you give karma to %s again in more %d seconds' % \
+        return 'You can give karma to %s again in more %d seconds' % \
                (user_nick, _time_between_karma - (time.time() - _last_karma_time[(from_id, to_id)]))
     _add_karma(from_id, to_id)
     return '%s has %s karma' % (user_nick, _get_karma(to_id))
