@@ -28,7 +28,7 @@ async def buy(client, member, index):
         return
     user_id = member.id
     if _get_karma(user_id) >= wanted.price:
-        _take_karma(user_id, wanted.price)
+        _take_karma(0, user_id, wanted.price)
         if wanted.type == 'role':
             role_obj = find_role_by_name(member.server.roles, wanted.value)
             await _set_role(client, member, role_obj)
