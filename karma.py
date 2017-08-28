@@ -16,18 +16,21 @@ def add_karma_cmd(client, message, args):
     if not _file_loaded:
         load_karma()
     try:
-        user_id = message.mentions[0].id
+        from_id = message.author.id
+        to_id = message.mentions[0].id
         user_nick = message.mentions[0].nick
         if user_nick is None:
             user_nick = message.mentions[0].name
     except:
         return ' No user specified!'
-    if user_id == message.author.id:
+    if to_id == from_id:
         return "4ril??"
-    if not _eligible_to_give(user_id):
-        return
-    _add_karma(user_id)
-    return '%s has %s karma' % (user_nick, _get_karma(user_id))
+    if not _eligible_to_give(from_id, to_id):
+        return 'You can give karma to %s again in more %d minutes' % \
+               (user_nick, (_time_between_karma - (time.time() - _last_karma_time[(from_id, to_id)])) / 60)
+    _add_karma(from_id, to_id)
+    return '%s has %s karma' % (user_nick, _get_karma(to_id))
+
 
 @utils.admin
 def set_karma_cmd(client, message, args):
@@ -59,49 +62,49 @@ def get_karma_cmd(client, message, args):
     return '%s has %s karma' % (user_nick, _get_karma(user_id))
 
 
-def _set_karma_time(user_id):
+def _set_karma_time(from_id, to_id):
     t = int(time.time())
-    _last_karma_time[user_id] = t
+    _last_karma_time[(from_id, to_id)] = t
 
 
-def _eligible_to_give(user_id):
-    if user_id not in _last_karma_time:
+def _eligible_to_give(from_id, to_id):
+    if (from_id, to_id) not in _last_karma_time:
         return True
-    return (int(time.time()) - _last_karma_time[user_id]) > _time_between_karma
+    return (int(time.time()) - _last_karma_time[(from_id, to_id)]) > _time_between_karma
 
 
-def _add_karma(user_id):
-    if user_id not in user_data:
-        user_data[user_id] = 1
+def _add_karma(from_id, to_id):
+    if to_id not in user_data:
+        user_data[to_id] = 1
     else:
-        user_data[user_id] += 1
-    _set_karma_time(user_id)
+        user_data[to_id] += 1
+    _set_karma_time(from_id, to_id)
     save_karma()
 
 
-def _set_karma(user_id, num=1):
-    user_data[user_id] = num
-    _set_karma_time(user_id)
+def _set_karma(from_id, to_id, num=1):
+    user_data[to_id] = num
+    _set_karma_time(from_id, to_id)
     save_karma()
 
 
-def _take_karma(user_id, num=1):
-    if user_id not in user_data:
-        user_data[user_id] = 0
+def _take_karma(from_id, to_id, num=1):
+    if to_id not in user_data:
+        user_data[to_id] = 0
     else:
-        user_data[user_id] -= num
-    _set_karma_time(user_id)
+        user_data[to_id] -= num
+    _set_karma_time(from_id, to_id)
     save_karma()
 
 
-def _dec_karma(user_id):
-    if user_id not in user_data:
-        user_data[user_id] = 0
+def _dec_karma(from_id, to_id):
+    if to_id not in user_data:
+        user_data[to_id] = 0
     else:
-        user_data[user_id] -= 1
-        if user_data[user_id] < 0:
-            user_data[user_id] = 0
-    _set_karma_time(user_id)
+        user_data[to_id] -= 1
+        if user_data[to_id] < 0:
+            user_data[to_id] = 0
+    _set_karma_time(from_id, to_id)
     save_karma()
 
 
