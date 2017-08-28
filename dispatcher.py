@@ -71,6 +71,7 @@ async def on_message(message):
         if command not in ['ddg', 'convert', 'clear', 'buy']:
             if 'bot' not in message.channel.name:
                  await client.send_message(message.author, '"${}" is not supported in none-bot channel!'.format(command))
+                 await client.delete_message(message)
                  return
 
         args = message.content.replace('$' + command + ' ', '', 1)
