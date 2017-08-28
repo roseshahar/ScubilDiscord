@@ -37,7 +37,8 @@ def set_karma_cmd(client, message, args):
     if not _file_loaded:
         load_karma()
     try:
-        user_id = message.mentions[0].id
+        from_id = message.author.id
+        to_id = message.mentions[0].id
         user_nick = message.mentions[0].nick
         if user_nick is None:
             user_nick = message.mentions[0].name
@@ -45,8 +46,8 @@ def set_karma_cmd(client, message, args):
     except Exception as e:
         print(e)
         return ' No user specified!'
-    _set_karma(user_id, num)
-    return '%s has %s karma' % (user_nick, _get_karma(user_id))
+    _set_karma(from_id, to_id, num)
+    return '%s has %s karma' % (user_nick, _get_karma(to_id))
 
 
 def get_karma_cmd(client, message, args):
