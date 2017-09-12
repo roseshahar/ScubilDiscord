@@ -11,6 +11,7 @@ from rand_cmd import rand_cmd
 from urban_cmd import query_urban_dictionary
 from eight_ball_cmd import eight_ball_cmd
 from clear_messages import clear_messages
+from eval_cmd import eval_cmd
 
 doc_file = open('help_file.txt')
 doc_str = doc_file.read()
@@ -59,6 +60,7 @@ commands = {
     'give': add_karma_cmd,
     'setkarma': set_karma_cmd,
     'karma': get_karma_cmd,
+    'eval': eval_cmd,
 }
 
 karma_store_cmds = {
