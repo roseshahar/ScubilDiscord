@@ -8,7 +8,7 @@ chroot_dir = path.join(path.dirname(path.abspath(__file__)), 'chroot')
 MB = 1024 * 1024
 
 def eval_cmd(client, message, args):
-	proc_args = ['nsjail', '-Mo', '--chroot', chroot_dir, '-E', 'LANG=en_US.UTF-8',
+	proc_args = ['../nsjail/nsjail', '-Mo', '--chroot', chroot_dir, '-E', 'LANG=en_US.UTF-8',
 			'-R/usr', '-R/lib', '-R/lib64', '--user', 'nobody',
 			'--time_limit', '2', '--disable_proc', '--iface_no_lo',
 			'--cgroup_mem_max', str(50 * MB), '--quiet', '--',
