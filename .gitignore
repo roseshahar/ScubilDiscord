@@ -101,4 +101,6 @@ ENV/
 .mypy_cache/
 .idea/
 
-token.txt
+*token.txt
+karma.pkl
+nohup.out
