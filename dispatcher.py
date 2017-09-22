@@ -68,14 +68,18 @@ async def on_message(message):
 
     if message.content.startswith('$'):
         command = message.content.strip('$').split(' ')[0]
+        command = command.split('\n')[0]
 
         if command not in ['ddg', 'convert', 'clear', 'buy']:
             if 'bot' not in message.channel.name:
                  await client.send_message(message.author, '"${}" is not supported in none-bot channel!'.format(command))
                  await client.delete_message(message)
                  return
-
-        args = message.content.replace('$' + command + ' ', '', 1)
+        try:
+            message.content.split('\n')[1]
+            args = message.content.replace('$' + command + '\n', '', 1)
+        except:
+            args = message.content.replace('$' + command + ' ', '', 1)
         if command in commands.keys():
             ret = commands[command](client, message, args)
             if type(ret) is str:
