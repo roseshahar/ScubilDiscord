@@ -1,8 +1,6 @@
 import os
 import pickle
-
 import time
-
 import utils
 
 user_data = {}
@@ -15,14 +13,23 @@ _time_between_karma = 60 * 30  # half an hour, in seconds
 def add_karma_cmd(client, message, args):
     if not _file_loaded:
         load_karma()
+
+    bot_name = client.user.display_name
+    bot_id = client.user.id
+
     try:
         from_id = message.author.id
         to_id = message.mentions[0].id
         user_nick = message.mentions[0].nick
         if user_nick is None:
             user_nick = message.mentions[0].name
+        user_name = message.mentions[0].name
     except:
         return ' No user specified!'
+
+    if bot_id != to_id and (user_nick == bot_name or user_name == bot_name):
+        return message.mentions[0].mention + ' tried to fool you!'
+
     if to_id == from_id:
         return "4ril??"
     if not _eligible_to_give(from_id, to_id):
