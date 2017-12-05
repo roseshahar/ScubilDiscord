@@ -4,6 +4,7 @@ import collections
 Item = collections.namedtuple('Item', 'name,type,value,price')
 
 items = [
+    Item(name='Uber - Role', type='role', value='Uber', price=50),
     Item(name='1337 - Role', type='role', value='1337', price=30),
     Item(name='Cyber - Role', type='role', value='Cyber', price=20),
     Item(name='root - Role', type='role', value='root', price=10),
