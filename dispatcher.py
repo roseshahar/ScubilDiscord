@@ -1,24 +1,27 @@
-import discord
-import asyncio
-import time
-import threading
+import os
 import re
 import sys
-from commands import commands, async_commands, karma_store_cmds
-from karma import _take_karma, user_data
+import utils
 import random
 import string
+import discord
+import asyncio
+import inspect
+from plugins import *
+from collections import namedtuple
 
-token_path = 'token.txt'
+Command = namedtuple('Command', 'function channels more_args')
+DIR = os.path.dirname(__file__) + '/'
+TOKEN_PATH = 'token.txt'
+CMD_SIGN = '%'
+
 if len(sys.argv) > 1:
-    token_path = sys.argv[1]
+    TOKEN_PATH = sys.argv[1]
+TOKEN = open(TOKEN_PATH).read().strip('\n')
 
+commands = dict()
 client = discord.Client()
-token = open(token_path).read().strip('\n')
-
-
 unverified = {}
-
 user_kick_timeout = 700
 
 
@@ -59,55 +62,73 @@ async def on_ready():
     print('------')
 
 
+async def process_cmd(message):
+    split = message.content[1:].split(' ')
+    cmd = split[0]
+    args = ' '.join(split[1:])
+
+    if cmd in commands.keys():
+        if commands[cmd].channels is None:
+            if inspect.iscoroutinefunction(commands[cmd].function):
+                await commands[cmd].function(client, message, args, **commands[cmd].more_args)
+            else:
+                ans = commands[cmd].function(client, message, args, **commands[cmd].more_args)
+                if type(ans) is str:
+                    await client.send_message(message.channel, message.author.mention + '\n' + ans)
+                elif type(ans) is discord.Embed:
+                    await client.send_message(message.channel, message.author.mention, embed=ans)
+        elif any([utils.is_right_channel(message.channel.name, channel) for channel in commands[cmd].channels]):
+            if inspect.iscoroutinefunction(commands[cmd].function):
+                await commands[cmd].function(client, message, args, **commands[cmd].more_args)
+            else:
+                ans = commands[cmd].function(client, message, args, **commands[cmd].more_args)
+                if type(ans) is str:
+                    await client.send_message(message.channel, message.author.mention + '\n' + ans)
+                elif type(ans) is discord.Embed:
+                    await client.send_message(message.channel, message.author.mention, embed=ans)
+        else:
+            await client.send_message(message.channel, '**Oops...**  you cant use that command in the channel')
+    else:
+        await client.send_message(message.channel, '**Oops...**  unknown command *{1}{0}* \n'
+                                                   '(use {1}help to see the list of commands)'.format(cmd, CMD_SIGN))
+
+
+@utils.register_command('help', ['bot'])
+async def get_help(bot, message, args):
+    """
+    Sends a 'help' message
+    ***----***
+    """
+    help_msg = "**__Help:__**\n\n"
+
+    for command_name, command_func, command_channels, command_args in utils.register_command.functions_list:
+        if hasattr(command_func, '__doc__') and isinstance(command_func.__doc__, str):
+            doc = command_func.__doc__.split("***----***")[0].lstrip().rstrip()
+        else:
+            doc = ""
+        help_msg += "**%s%s** - *%s*\n" % (CMD_SIGN, command_name, doc)
+    await bot.send_message(message.channel, help_msg)
+
+
+@utils.register_command('ping', ['bot'])
+async def ping_cmd(bot, message, args):
+    """
+    return a pong
+    ***----***
+    """
+    await bot.send_message(message.channel, "Pong!")
+
+
 @client.event
 async def on_message(message):
-    if message.author.id == "92756365214253056" or message.author.id == 92756365214253056:
+    if message.author == client.user:
         return
-    if re.match("^ע[ד]+[ ]*מת[י]+$",message.content):
+    elif message.content.startswith(CMD_SIGN):
+        await process_cmd(message)
+    if re.match("^ע[ד]+[ ]*מת[י]+$", message.content):
         await client.send_message(message.channel, message.author.mention + '\nשתוק יצעיר פעור ולח')
-        _take_karma(message.author.id)
         return
 
-    if message.content.startswith('$'):
-        command = message.content.strip('$').split(' ')[0]
-        command = command.split('\n')[0]
-
-        if command not in ['ddg', 'convert', 'clear', 'buy', 'py', 'bf']:
-            if 'bot' not in message.channel.name:
-                 await client.send_message(message.author, '"${}" is not supported in none-bot channel!'.format(command))
-                 await client.delete_message(message)
-                 return
-        try:
-            message.content.split('\n')[1]
-            args = message.content.replace('$' + command + '\n', '', 1)
-        except:
-            args = message.content.replace('$' + command + ' ', '', 1)
-        if command in commands.keys():
-            ret = commands[command](client, message, args)
-            if type(ret) is str:
-                await client.send_message(message.channel, message.author.mention + '\n' + ret)
-
-            elif type(ret) is discord.Embed:
-                await client.send_message(message.channel, message.author.mention, embed=ret)
-
-        elif command in async_commands:
-            await async_commands[command](client, message, args)
-
-        elif 'karma-store' == message.channel.name:
-            if command in karma_store_cmds:
-                await karma_store_cmds[command](client, message, args)
-            else:
-                await client.delete_message(message)
-
-        else:
-            await client.send_message(message.channel, message.author.mention + '\n"${}" is not supported!'.format(command))
-
-    elif 'karma-store' == message.channel.name:
-        await client.delete_message(message)
-    if message.author in unverified.keys():
-        if message.content == unverified[message.author]:
-            await client.send_message(message.channel,
-                                      message.author.mention + ' thanks!')
-            unverified.pop(message.author)
-
-client.run(token)
+for cmd_name, cmd_func, cmd_channels, cmd_args in utils.register_command.functions_list:
+    commands[cmd_name] = Command(function=cmd_func, channels=cmd_channels, more_args=cmd_args)
+client.run(TOKEN)

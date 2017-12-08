@@ -1,5 +1,6 @@
-from karma import _get_karma, _take_karma
+from plugins.karma import _get_karma, _take_karma
 import collections
+import utils
 
 Item = collections.namedtuple('Item', 'name,type,value,price')
 
@@ -11,7 +12,13 @@ items = [
     Item(name='Skid - Role', type='role', value='Skid', price=5),
 ]
 
+
+@utils.register_command('buy', ['karma-store'])
 async def buy_item(client, message, args):
+    """
+    you can buy role with this command
+    ***----***
+    """
     try:
         index = int(args)
     except:
@@ -20,6 +27,7 @@ async def buy_item(client, message, args):
         return
     await buy(client, message.author, index)
     await client.delete_message(message)
+
 
 async def buy(client, member, index):
     try:

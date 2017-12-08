@@ -10,7 +10,12 @@ _last_karma_time = {}
 _time_between_karma = 60 * 30  # half an hour, in seconds
 
 
+@utils.register_command('give', ['bot'])
 def add_karma_cmd(client, message, args):
+    """
+    "give @USER": give 1 karma to a user
+    ***----***
+    """
     if not _file_loaded:
         load_karma()
 
@@ -39,8 +44,13 @@ def add_karma_cmd(client, message, args):
     return '%s has %s karma' % (user_nick, _get_karma(to_id))
 
 
+@utils.register_command('setkarma', ['bot'])
 @utils.admin
 def set_karma_cmd(client, message, args):
+    """
+    (ADMIN ONLY!) "setkarma @USER AMOUNT": sets AMOUNT karma to a user
+    ***----***
+    """
     if not _file_loaded:
         load_karma()
     try:
@@ -57,7 +67,12 @@ def set_karma_cmd(client, message, args):
     return '%s has %s karma' % (user_nick, _get_karma(to_id))
 
 
+@utils.register_command('karma', ['bot'])
 def get_karma_cmd(client, message, args):
+    """
+    "karma @USER": check how much karma a user has
+    ***----***
+    """
     if not _file_loaded:
         load_karma()
     try:

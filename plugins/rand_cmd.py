@@ -1,7 +1,13 @@
+import utils
 from random import randint
 
 
+@utils.register_command('rand', ['bot'])
 def rand_cmd(client, message, args):
+    """
+    "rand START END": generate a random number between START & END
+    ***----***
+    """
     if len(args) < 2:
         return 'Illegal'
     num1 = args.split(' ')[0]

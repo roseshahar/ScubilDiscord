@@ -1,7 +1,14 @@
 import discord
 import string
+import utils
 
+
+@utils.register_command('hex2dec', ['bot'])
 def hex_to_dec_cmd(client, message, args):
+    """
+    "hex2dec NUM": convert an hex number to decimal
+    ***----***
+    """
     if len(args) < 2:
         return 'Illegal'
     try:
@@ -13,7 +20,12 @@ def hex_to_dec_cmd(client, message, args):
         return 'Illegal'
 
 
+@utils.register_command('dec2hex', ['bot'])
 def dec_to_hex_cmd(client, message, args):
+    """
+    "dec2hex NUM": convert a decimal number to hexadecimal
+    ***----***
+    """
     if len(args) < 2:
         return 'Illegal'
     try:
@@ -22,7 +34,13 @@ def dec_to_hex_cmd(client, message, args):
     except:
         return 'Illegal'
 
+
+@utils.register_command('convert', ['bot'])
 def num_converter_cmd(client, message, args):
+    """
+    "convert VAL": convert VAL
+    ***----***
+    """
     try:
         num = args.split(' ')[0]
 
@@ -45,6 +63,9 @@ def num_converter_cmd(client, message, args):
             binary = bin(decimal)
             hexa = hex(decimal)
 
-        return discord.Embed(title='Conversion', description=f'Decimal: {decimal}\nHexadecimal: {hexa}\nOctal: {octal}\nBinary: {binary}\nUnicode: {char}', color=3447003)
+        return discord.Embed(title='Conversion',
+                             description=f'Decimal: {decimal}\nHexadecimal: {hexa}\nOctal: {octal}\n'
+                                         f'Binary: {binary}\nUnicode: {char}',
+                             color=3447003)
     except:
         return discord.Embed(title='Sorry', description='Correct Usage: $convert <input>', color=0xff5b4c)
