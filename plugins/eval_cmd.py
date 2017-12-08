@@ -61,7 +61,7 @@ def eval_cmd_bf(client, message, args):
                  '-R/usr', '-R/lib', '-R/lib64', '--user', 'nobody',
                  '--time_limit', '2', '--disable_proc', '--iface_no_lo',
                  '--cgroup_mem_max', str(50 * MB), '--quiet', '--',
-                 '../brainfuck/build/brainfuck']
+                 '/usr/bin/brainfuck']
 
     proc = subprocess.Popen(proc_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, universal_newlines=True)
