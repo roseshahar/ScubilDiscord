@@ -37,7 +37,7 @@ async def on_ready():
 
 
 async def process_cmd(message):
-    split = message.content[1:].split(' ')
+    split = message.content[1:].split()
     cmd = split[0]
     args = ' '.join(split[1:])
 

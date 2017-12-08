@@ -18,7 +18,7 @@ def prep_input(args):
     return args.strip('`').strip()
 
 
-@utils.register_command('py', ['bot'])
+@utils.register_command('py')
 def eval_cmd_py(client, message, args):
     """
     python eval
@@ -50,7 +50,7 @@ def eval_cmd_py(client, message, args):
     return discord.Embed(title='Result', description=output[:200], color=3447003)
 
 
-@utils.register_command('bf', ['bot'])
+@utils.register_command('bf')
 def eval_cmd_bf(client, message, args):
     """
     brainfuck eval
