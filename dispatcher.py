@@ -2,8 +2,6 @@ import os
 import re
 import sys
 import utils
-import random
-import string
 import discord
 import asyncio
 import inspect
@@ -25,33 +23,11 @@ unverified = {}
 user_kick_timeout = 700
 
 
-async def destroy(member):
-    await asyncio.sleep(user_kick_timeout)
-    try:
-        if member in unverified.keys():
-            await client.send_message(member.server, "{0.mention} IT'S HAMMER TIME".format(member))
-            await client.kick(member)
-    except discord.Forbidden:
-        await client.send_message(member.server, 'Member is too stronk')
-    finally:
-        unverified.pop(member)
-
-
-def generate_captcha():
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-
-
 @client.event
 async def on_member_join(member):
     server = member.server
-    fmt = "Welcome {0.mention}!\n Please type the following message in order to verify that you're a human: `{1}`"
-
-    if member not in unverified.keys():
-        captcha = generate_captcha()
-        unverified[member] = captcha
-
-        await client.send_message(server, server.owner.top_role.mention + '\n ' + fmt.format(member, captcha))
-        await destroy(member)
+    fmt = "Welcome {0.mention}!\n"
+    await client.send_message(server, server.owner.top_role.mention + '\n ' + fmt.format(member))
 
 
 @client.event
@@ -87,7 +63,7 @@ async def process_cmd(message):
                 elif type(ans) is discord.Embed:
                     await client.send_message(message.channel, message.author.mention, embed=ans)
         else:
-            await client.send_message(message.channel, '**Oops...**  you cant use that command in the channel')
+            await client.send_message(message.channel, '**Oops...**  you can\'t use that command in this channel')
     else:
         await client.send_message(message.channel, '**Oops...**  unknown command *{1}{0}* \n'
                                                    '(use {1}help to see the list of commands)'.format(cmd, CMD_SIGN))
