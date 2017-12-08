@@ -17,10 +17,8 @@ if len(sys.argv) > 1:
     TOKEN_PATH = sys.argv[1]
 TOKEN = open(TOKEN_PATH).read().strip('\n')
 
-commands = dict()
+commands = {}
 client = discord.Client()
-unverified = {}
-user_kick_timeout = 700
 
 
 @client.event
@@ -103,7 +101,6 @@ async def on_message(message):
         await process_cmd(message)
     if re.match("^ע[ד]+[ ]*מת[י]+$", message.content):
         await client.send_message(message.channel, message.author.mention + '\nשתוק יצעיר פעור ולח')
-        return
 
 for cmd_name, cmd_func, cmd_channels, cmd_args in utils.register_command.functions_list:
     commands[cmd_name] = Command(function=cmd_func, channels=cmd_channels, more_args=cmd_args)
