@@ -4,9 +4,9 @@ import sys
 import utils
 import discord
 import asyncio
-import inspect
 from plugins import *
 from collections import namedtuple
+from plugins.clear_messages import clear_messages
 
 Command = namedtuple('Command', 'function channels more_args')
 DIR = os.path.dirname(__file__) + '/'
@@ -43,7 +43,7 @@ async def process_cmd(message):
 
     if cmd in commands.keys():
         if commands[cmd].channels is None:
-            if inspect.iscoroutinefunction(commands[cmd].function):
+            if asyncio.iscoroutinefunction(commands[cmd].function):
                 await commands[cmd].function(client, message, args, **commands[cmd].more_args)
             else:
                 ans = commands[cmd].function(client, message, args, **commands[cmd].more_args)
@@ -52,7 +52,7 @@ async def process_cmd(message):
                 elif type(ans) is discord.Embed:
                     await client.send_message(message.channel, message.author.mention, embed=ans)
         elif any([utils.is_right_channel(message.channel.name, channel) for channel in commands[cmd].channels]):
-            if inspect.iscoroutinefunction(commands[cmd].function):
+            if asyncio.iscoroutinefunction(commands[cmd].function):
                 await commands[cmd].function(client, message, args, **commands[cmd].more_args)
             else:
                 ans = commands[cmd].function(client, message, args, **commands[cmd].more_args)

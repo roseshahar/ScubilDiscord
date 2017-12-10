@@ -1,8 +1,11 @@
+import asyncio
+
 import discord
 import utils
 
 
 @utils.register_command('clear')
+@asyncio.coroutine
 @utils.admin
 async def clear_messages(client, message, args):
     """
