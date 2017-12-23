@@ -95,6 +95,11 @@ async def ping_cmd(bot, message, args):
 
 @client.event
 async def on_message(message):
+    if message.channel.name == 'karma-store':
+        await client.delete_message(message)
+        if not message.content.startswith(CMD_SIGN + 'buy'):
+            return
+
     if message.author == client.user:
         return
     elif message.content.startswith(CMD_SIGN):
