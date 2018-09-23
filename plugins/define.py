@@ -8,7 +8,7 @@ english = string.ascii_letters + string.whitespace + string.digits + extra
 hebrew = 'אבגדהוזחטיכלמנסעפצקרשתךףםןץ' + string.whitespace + extra
 
 
-@utils.register_command('bill')
+@utils.register_command('define')
 def define_cmd(client, message, args):
     """
     "def PHRASE": find a definition for PHRASE, works for Hebrew and English
